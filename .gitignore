@@ -17,3 +17,6 @@ ui/.env.local
 # Node
 node_modules/
 ui/.next/
+
+# Local Netlify folder
+.netlify
