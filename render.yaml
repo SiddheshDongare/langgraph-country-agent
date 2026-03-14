@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: country-agent-api
+    runtime: python
+    buildCommand: pip install uv && uv sync
+    startCommand: uv run uvicorn country_agent.api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: COUNTRY_AGENT_OPENAI_API_KEY
+        sync: false
+      - key: COUNTRY_AGENT_ALLOWED_ORIGINS
+        sync: false

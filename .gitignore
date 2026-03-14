@@ -9,3 +9,11 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Secrets
+.env
+ui/.env.local
+
+# Node
+node_modules/
+ui/.next/

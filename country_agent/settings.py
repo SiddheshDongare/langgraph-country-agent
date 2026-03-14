@@ -13,42 +13,30 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="COUNTRY_AGENT_", env_file=".env", extra="ignore")
 
     # LLM configuration
-    llm_provider: str = "openai"  # "openai" or "anthropic"
-    llm_model: str = ""  # auto-selected if empty
+    llm_model: str = "openai/gpt-oss-120b"
     openai_api_key: str = ""
-    anthropic_api_key: str = ""
+    openai_base_url: str = "https://api.groq.com/openai/v1"
 
     # REST Countries API
     api_base_url: str = "https://restcountries.com/v3.1"
     api_timeout_seconds: int = 10
 
+    # CORS — space-separated or JSON-list of allowed origins
+    allowed_origins: list[str] = ["http://localhost:3000"]
+
     # Observability
     log_level: str = "INFO"
     log_format: str = "json"  # "json" or "text"
 
-    @property
-    def resolved_llm_model(self) -> str:
-        if self.llm_model:
-            return self.llm_model
-        return "gpt-4o-mini" if self.llm_provider == "openai" else "claude-sonnet-4-6"
-
     def get_llm(self) -> BaseChatModel:
-        """Return a configured ChatModel based on provider settings."""
-        if self.llm_provider == "anthropic":
-            from langchain_anthropic import ChatAnthropic
-
-            logger.info("initializing_llm", provider="anthropic", model=self.resolved_llm_model)
-            return ChatAnthropic(
-                model=self.resolved_llm_model,
-                api_key=self.anthropic_api_key or None,  # type: ignore[arg-type]
-            )
-
+        """Return a configured ChatOpenAI instance."""
         from langchain_openai import ChatOpenAI
 
-        logger.info("initializing_llm", provider="openai", model=self.resolved_llm_model)
+        logger.info("initializing_llm", model=self.llm_model, base_url=self.openai_base_url)
         return ChatOpenAI(
-            model=self.resolved_llm_model,
+            model=self.llm_model,
             api_key=self.openai_api_key or None,  # type: ignore[arg-type]
+            base_url=self.openai_base_url,
         )
 
 
