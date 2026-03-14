@@ -12,7 +12,7 @@ _settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_settings.allowed_origins,
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "HEAD"],
     allow_headers=["Content-Type"],
 )
 
@@ -33,6 +33,6 @@ async def ask(body: AskRequest) -> AskResponse:
     return AskResponse(answer=answer)
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health() -> dict:
     return {"status": "ok"}
