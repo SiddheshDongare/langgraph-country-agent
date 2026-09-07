@@ -17,11 +17,12 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     openai_base_url: str = "https://api.groq.com/openai/v1"
 
-    # REST Countries API
-    api_base_url: str = "https://restcountries.com/v3.1"
+    # REST Countries API (v5 — needs a key from https://restcountries.com; v3.1 is deprecated)
+    api_base_url: str = "https://api.restcountries.com/countries/v5"
+    api_key: str = ""
     api_timeout_seconds: int = 10
 
-    # CORS — space-separated or JSON-list of allowed origins
+    # CORS — JSON list, e.g. COUNTRY_AGENT_ALLOWED_ORIGINS='["https://foo.app"]' (bare/space-separated fails to parse)
     allowed_origins: list[str] = ["http://localhost:3000"]
 
     # Observability

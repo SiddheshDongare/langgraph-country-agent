@@ -73,36 +73,45 @@ class CountryInfo(BaseModel):
 
     @classmethod
     def from_api_response(cls, data: dict) -> "CountryInfo":
-        """Parse a single country object from the REST Countries API response."""
-        name = data.get("name", {})
+        """Parse a single country object from the REST Countries v5 API response."""
+        names = data.get("names", {}) or {}
+        codes = data.get("codes", {}) or {}
 
-        currencies_raw = data.get("currencies", {}) or {}
         currencies = [
-            CurrencyInfo(code=code, name=info.get("name", ""), symbol=info.get("symbol", ""))
-            for code, info in currencies_raw.items()
+            CurrencyInfo(
+                code=c.get("code", ""), name=c.get("name", ""), symbol=c.get("symbol", "") or ""
+            )
+            for c in (data.get("currencies") or [])
         ]
 
-        car = data.get("car", {}) or {}
+        # v5 returns languages as a list of objects; the synthesis prompt wants {code: name}
+        languages = {
+            (lang.get("iso639_3") or lang.get("bcp47") or ""): lang.get("name", "")
+            for lang in (data.get("languages") or [])
+        }
+
+        coords = data.get("coordinates", {}) or {}
+        latlng = [coords["lat"], coords["lng"]] if "lat" in coords and "lng" in coords else []
 
         return cls(
-            name_common=name.get("common", ""),
-            name_official=name.get("official", ""),
-            capital=data.get("capital") or [],
-            population=data.get("population", 0),
+            name_common=names.get("common", ""),
+            name_official=names.get("official", ""),
+            capital=[c.get("name", "") for c in (data.get("capitals") or []) if c.get("name")],
+            population=data.get("population", 0) or 0,
             currencies=currencies,
-            languages=data.get("languages") or {},
-            region=data.get("region", ""),
-            subregion=data.get("subregion", ""),
-            area=data.get("area", 0.0) or 0.0,
+            languages=languages,
+            region=data.get("region", "") or "",
+            subregion=data.get("subregion", "") or "",
+            area=(data.get("area") or {}).get("kilometers", 0.0) or 0.0,
             borders=data.get("borders") or [],
             timezones=data.get("timezones") or [],
             continents=data.get("continents") or [],
-            flag=data.get("flag", ""),
-            latlng=data.get("latlng") or [],
-            maps=data.get("maps") or {},
-            tld=data.get("tld") or [],
-            cca2=data.get("cca2", ""),
-            cca3=data.get("cca3", ""),
-            gini=data.get("gini") or {},
-            car_side=car.get("side", ""),
+            flag=(data.get("flag") or {}).get("emoji", "") or "",
+            latlng=latlng,
+            maps=data.get("links") or {},
+            tld=data.get("tlds") or [],
+            cca2=codes.get("alpha_2", "") or "",
+            cca3=codes.get("alpha_3", "") or "",
+            gini=(data.get("economy") or {}).get("gini_coefficient") or {},
+            car_side=(data.get("cars") or {}).get("driving_side", "") or "",
         )

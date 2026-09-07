@@ -1,11 +1,18 @@
 services:
   - type: web
-    name: country-agent-api
+    name: langgraph-country-agent
     runtime: python
+    plan: free
+    region: singapore
+    healthCheckPath: /health
     buildCommand: pip install uv && uv sync
     startCommand: uv run uvicorn country_agent.api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: COUNTRY_AGENT_OPENAI_API_KEY
         sync: false
+      # REST Countries v5 API key
+      - key: COUNTRY_AGENT_API_KEY
+        sync: false
+      # JSON list, e.g. ["https://langgraph-country-agent.netlify.app"]
       - key: COUNTRY_AGENT_ALLOWED_ORIGINS
         sync: false
