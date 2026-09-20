@@ -284,6 +284,7 @@ export default function Home() {
             onClick={() => handleSubmit()}
             disabled={loading || !question.trim()}
             aria-label="Submit"
+            data-testid="ask-submit"
           >
             →
           </button>
@@ -300,8 +301,15 @@ export default function Home() {
           ))}
         </div>
 
+        {/* The error paragraph below is a genuinely unnamed alert and stays that
+            way — it is already recorded as an accessibility gap. This named
+            status sits beside it so tests have something correct to assert on. */}
+        <div role="status" aria-label="Answer status" className="error-text">
+          {loading ? "Loading answer" : error ? "Answer failed" : answer ? "Answer ready" : ""}
+        </div>
+
         {(loading || answer || error) && (
-          <div className="answer-card">
+          <div className="answer-card" data-testid="answer-card">
             {loading ? (
               <span className="loading-dots">
                 <span className="dot">.</span>

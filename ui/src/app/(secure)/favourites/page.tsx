@@ -67,7 +67,7 @@ export default async function FavouritesPage({
             ))}
           </select>
         </div>
-        <button type="submit" className="border p-2 font-medium">
+        <button type="submit" className="border p-2 font-medium" data-testid="save-favourite">
           Save to favourites
         </button>
       </form>

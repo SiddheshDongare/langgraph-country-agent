@@ -38,7 +38,7 @@ export default async function CountryPage({ params }: Props) {
       {/* A real POST, so the crawler never reaches the confirmation. */}
       <form method="post" action="/api/favourites">
         <input type="hidden" name="slug" value={country.slug} />
-        <button type="submit" className="border p-2 font-medium">
+        <button type="submit" className="border p-2 font-medium" data-testid="save-favourite">
           Save to favourites
         </button>
       </form>

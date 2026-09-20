@@ -53,7 +53,7 @@ export default async function CountriesPage({
         </thead>
         <tbody>
           {visible.map((country) => (
-            <tr key={country.slug}>
+            <tr key={country.slug} data-testid="country-row">
               <td className="border-b p-2">
                 <a href={`/countries/${country.slug}`} className="underline">
                   {country.name}
