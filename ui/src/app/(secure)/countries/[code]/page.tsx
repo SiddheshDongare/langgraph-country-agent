@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { bySlug } from "@/lib/countries";
 import { FactList, factGroups } from "@/components/facts";
+import { Tabs } from "@/components/tabs";
 
 type Props = { params: Promise<{ code: string }> };
 
@@ -20,12 +21,13 @@ export default async function CountryPage({ params }: Props) {
     <main>
       <h1 className="mb-4 text-2xl font-semibold">{country.name}</h1>
 
-      {factGroups(country).map((group) => (
-        <section key={group.label} aria-label={group.label} className="mb-6">
-          <h2 className="mb-2 text-lg font-semibold">{group.label}</h2>
-          <FactList facts={group.facts} />
-        </section>
-      ))}
+      <Tabs
+        label="Country details"
+        panels={factGroups(country).map((group) => ({
+          label: group.label,
+          content: <FactList facts={group.facts} />,
+        }))}
+      />
 
       <p className="mb-6">
         <a href={`/countries/${country.slug}/borders`} className="underline">
