@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { seeOther } from "@/lib/http";
 import { SESSION_COOKIE, safeEqual, sign } from "@/lib/session";
 
 /**
@@ -22,10 +23,10 @@ export async function POST(request: NextRequest) {
     safeEqual(password, expectedPassword!);
 
   if (!ok) {
-    return NextResponse.redirect(new URL("/login?error=1", request.url), 303);
+    return seeOther("/login?error=1");
   }
 
-  const response = NextResponse.redirect(new URL("/countries", request.url), 303);
+  const response = seeOther("/countries");
   response.cookies.set(SESSION_COOKIE, sign(expectedEmail!), {
     httpOnly: true,
     sameSite: "lax",

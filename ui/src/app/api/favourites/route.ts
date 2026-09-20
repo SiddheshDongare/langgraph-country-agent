@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { seeOther } from "@/lib/http";
 import { bySlug } from "@/lib/countries";
 import { FAVOURITES_COOKIE, readFavourites } from "@/lib/favourites";
 
@@ -12,21 +13,18 @@ export async function POST(request: NextRequest) {
   const slug = String(form.get("slug") ?? "").trim();
 
   if (!slug) {
-    return NextResponse.redirect(new URL("/favourites?error=empty", request.url), 303);
+    return seeOther("/favourites?error=empty");
   }
 
   const country = bySlug(slug);
   if (!country) {
-    return NextResponse.redirect(new URL("/favourites?error=unknown", request.url), 303);
+    return seeOther("/favourites?error=unknown");
   }
 
   const current = await readFavourites();
   const next = current.includes(country.slug) ? current : [...current, country.slug];
 
-  const response = NextResponse.redirect(
-    new URL(`/favourites?saved=${country.slug}`, request.url),
-    303,
-  );
+  const response = seeOther(`/favourites?saved=${country.slug}`);
   response.cookies.set(FAVOURITES_COOKIE, next.join(","), {
     httpOnly: true,
     sameSite: "lax",
