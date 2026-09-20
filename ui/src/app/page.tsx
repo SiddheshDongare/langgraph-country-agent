@@ -261,6 +261,11 @@ export default function Home() {
         <div className="header">
           <h1 className="title">Country Intelligence</h1>
           <p className="subtitle">Geographic Data Retrieval</p>
+          <p className="subtitle">
+            <a className="example-link" href="/countries">
+              Countries
+            </a>
+          </p>
           <div className="divider" />
         </div>
 
