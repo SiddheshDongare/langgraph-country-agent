@@ -27,11 +27,19 @@ export default async function CountryPage({ params }: Props) {
         </section>
       ))}
 
-      <p>
+      <p className="mb-6">
         <a href={`/countries/${country.slug}/borders`} className="underline">
           Borders of {country.name}
         </a>
       </p>
+
+      {/* A real POST, so the crawler never reaches the confirmation. */}
+      <form method="post" action="/api/favourites">
+        <input type="hidden" name="slug" value={country.slug} />
+        <button type="submit" className="border p-2 font-medium">
+          Save to favourites
+        </button>
+      </form>
     </main>
   );
 }
